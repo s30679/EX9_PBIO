@@ -238,7 +238,8 @@ def main():
 
     print("")
     print("3:")
-    motive_search(sequence)
+    motive_pos=motive_search(sequence)
+    print(motive_pos)
 
     print("")
     print("5:")

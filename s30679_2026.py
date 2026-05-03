@@ -202,6 +202,5 @@ def main():
     print(rev_comp_seq)
 
 
-
 if __name__ == "__main__":
     main()

@@ -1,5 +1,5 @@
 #numer albumu: s30679
-#Data: 02.05.2026
+#Data: 03.05.2026
 
 #Krótki opis programu:
 #Program służy do generowania, zapisywania i analizy sekwencji DNA z wykorzystaniem formatu Fasta.
@@ -101,6 +101,67 @@ def insert_name(sequence: str, name: str) -> str:
     seq_right=sequence[pos:]
     return seq_left+name+seq_right
 
+#1
+def butch_mode():
+    """Generuje x sekwencji w pętli, każdą z unikalnym ID (Seq_001, Seq _002, itd.) i zapisuje wszystkie do jednego pliku FASTA (multi-FASTA)."""
+    state=True
+    while state:
+        no_of_seq=input("Podaj liczbę generowanych sekwencji: ")
+        try:
+            number = int(no_of_seq)
+            if(number<=0):
+                print(f"Miałeś/aś podać liczbę całkowitą większą od zera!")
+                print()
+            else:
+                state=False
+        except ValueError:
+            print(f"Miałeś/aś podać liczbę całkowitą większą od zera!")
+            print()
+
+    fasta_content=""
+    for i in range(number):
+        length=validate_positive_int()
+        if(i<9):
+            seq_id="Seq_00"+str(i+1)
+        elif(i<99):
+            seq_id="Seq_0"+str(i+1)
+        else:
+            seq_id="Seq_"+str(i+1)
+        sequence=generate_sequence(length)
+        fasta_content+=format_fasta(seq_id=seq_id,sequence=sequence)+"\n"
+    fasta_filename="multi_seq.fasta"
+    with open(fasta_filename, "w", encoding="utf-8") as f:
+        f.write(fasta_content)
+
+#4
+def generate_complement_sequence(sequence:str) -> str:
+    """Funkcja zwraca komplementarną sekwencję DNA do wskazanej."""
+    sekwencja=""
+    for i in sequence:
+        match i:
+            case 'A':
+                sekwencja+="T"
+            case 'C':
+                sekwencja+="G"
+            case 'T':
+                sekwencja+="A"
+            case 'G':
+                sekwencja+="C"
+    return sekwencja
+
+def generate__rev_comp_seq(sequence:str) -> str:
+    """Funkcja zwraca odwrotnie komplementarną sekwencję DNA do wskazanej."""
+    sekwencja=generate_complement_sequence(sequence)
+    return "".join(reversed(sekwencja))
+
+#3
+def motive_search(sequence:str)-> tuple:
+    """"""
+
+#5
+def gen_trans_in_silic(sequence:str)-> str:
+    """"""
+
 def main():
     """Główne wywoływanie funkcjonalności programu."""
     length=validate_positive_int()
@@ -119,12 +180,28 @@ def main():
     print("Sekwencja z imieniem: "+sequence_with_name)
     print("")
     print("Sekwencja zapisana do pliku: "+fasta_filename)
-    print("Statystyki sekwencji (length="+str(length)+"):")
+    print("Statystyki sekwencji (n="+str(length)+"):")
     print("A:          "+str(stats["A"])+"%")
     print("C:          "+str(stats["C"])+"%")
     print("G:          "+str(stats["G"])+"%")
     print("T:          "+str(stats["T"])+"%")
     print("GC-content: "+str(stats["GC"])+"%")
+
+    print("Bonus functions:")
+    print("1:")
+    butch_mode()
+
+    print("4:")
+    print("Podstawowa sekwencja:")
+    print(sequence)
+    print("Komplementarna sekwencja:")
+    comp_seq=generate_complement_sequence(sequence=sequence)
+    print(comp_seq)
+    print("Odwrotnie komplementarna sekwencja:")
+    rev_comp_seq=generate__rev_comp_seq(sequence=sequence)
+    print(rev_comp_seq)
+
+
 
 if __name__ == "__main__":
     main()

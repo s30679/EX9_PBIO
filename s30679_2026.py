@@ -159,8 +159,31 @@ def motive_search(sequence:str)-> tuple:
     """"""
 
 #5
-def gen_trans_in_silic(sequence:str)-> str:
-    """"""
+def gen_trans_in_silic(sequence:str)->str:
+    """Funkcja zwraca transkrypcję in silico. Generuje sekwencję mRNA (zamiana T na U) i zapisuje ją jako odrębny rekord w pliku FASTA."""
+    sekwencja=""
+    for i in sequence:
+        if i=="T":
+            sekwencja+="U"
+        elif(i=="A" or i=="C" or i=="G"):
+            sekwencja+=i
+    return sekwencja
+
+def seq_and_in_silic():
+    """Funkcja pozwala wygenerowac sekwencję oraz od razu stworzyć jej transkrypcję in silico."""
+    length=validate_positive_int()
+    seq_id=validate_fasta_ID()
+    description=input("Podaj opis sekwencji (opcjonalnie, Enter aby pominąć): ").strip()
+    sequence=generate_sequence(length)
+    fasta_content=format_fasta(seq_id, sequence, description)
+    sequence_in_sili=gen_trans_in_silic(sequence)
+    seq_id_in_sili=seq_id+"in_silico"
+    fasta_content_in_sili=format_fasta(seq_id_in_sili, sequence_in_sili)
+    ans=fasta_content+"\n"+fasta_content_in_sili
+    fasta_filename=seq_id+".fasta"
+    with open(fasta_filename, "w", encoding="utf-8") as f:
+        f.write(ans)
+    print("Zapisano plik fasta.")
 
 def main():
     """Główne wywoływanie funkcjonalności programu."""
@@ -201,6 +224,8 @@ def main():
     rev_comp_seq=generate__rev_comp_seq(sequence=sequence)
     print(rev_comp_seq)
 
+    print("5:")
+    seq_and_in_silic()
 
 if __name__ == "__main__":
     main()

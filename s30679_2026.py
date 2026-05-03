@@ -128,7 +128,7 @@ def butch_mode():
         else:
             seq_id="Seq_"+str(i+1)
         sequence=generate_sequence(length)
-        fasta_content+=format_fasta(seq_id=seq_id,sequence=sequence)+"\n"
+        fasta_content+=format_fasta(seq_id=seq_id,sequence=sequence)+"\n"+"\n"
     fasta_filename="multi_seq.fasta"
     with open(fasta_filename, "w", encoding="utf-8") as f:
         f.write(fasta_content)
@@ -155,8 +155,18 @@ def generate__rev_comp_seq(sequence:str) -> str:
     return "".join(reversed(sekwencja))
 
 #3
-def motive_search(sequence:str)-> tuple:
-    """"""
+def motive_search(sequence:str)-> list:
+    """Generuje sekwencje i wyszukuje w niej wskazany przez użytkownika motyw (np. "ATG") i wypisuje wszystkie pozycje wystąpień (indeksowanie od 1, zgodnie z konwencją biologiczną)."""
+    motive=input("Podaj motyw do wyszukania: ").strip().upper()
+    pos=[]
+    begin=0
+    while begin<len(sequence):
+        ac_pos=sequence.find(motive,begin)
+        if ac_pos==-1:
+            break
+        pos.append(ac_pos+1)
+        begin=ac_pos+1
+    return pos
 
 #5
 def gen_trans_in_silic(sequence:str)->str:
@@ -179,7 +189,7 @@ def seq_and_in_silic():
     sequence_in_sili=gen_trans_in_silic(sequence)
     seq_id_in_sili=seq_id+"in_silico"
     fasta_content_in_sili=format_fasta(seq_id_in_sili, sequence_in_sili)
-    ans=fasta_content+"\n"+fasta_content_in_sili
+    ans=fasta_content+"\n"+"\n"+fasta_content_in_sili
     fasta_filename=seq_id+".fasta"
     with open(fasta_filename, "w", encoding="utf-8") as f:
         f.write(ans)
@@ -210,10 +220,12 @@ def main():
     print("T:          "+str(stats["T"])+"%")
     print("GC-content: "+str(stats["GC"])+"%")
 
+    print("")
     print("Bonus functions:")
     print("1:")
     butch_mode()
 
+    print("")
     print("4:")
     print("Podstawowa sekwencja:")
     print(sequence)
@@ -224,6 +236,11 @@ def main():
     rev_comp_seq=generate__rev_comp_seq(sequence=sequence)
     print(rev_comp_seq)
 
+    print("")
+    print("3:")
+    motive_search(sequence)
+
+    print("")
     print("5:")
     seq_and_in_silic()
 

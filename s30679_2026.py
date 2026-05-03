@@ -48,7 +48,7 @@ def validate_fasta_ID(prompt: str ="Podaj ID pliku fasta. ID nie może zawierać
         for i in ID_fasta:
             if i==' ' or i=='\t' or i=='\n':
                 counter+=1
-        if counter!=0:
+        if counter!=0 or ID_fasta=="":
             print("ID nie może zawierać znaków białych!")
             print()
         else:
@@ -60,15 +60,71 @@ def format_fasta(seq_id: str, sequence: str, description: str="", line_width: in
     spot_in_seq=0
     text=header+"\n"
     for i in range(len(sequence)):
-        if(spot_in_seq%line_width==0):
+        if(spot_in_seq%line_width==0 and spot_in_seq!=0):
             text+="\n"
         text+=sequence[i]
         spot_in_seq+=1
     return text
 
+def calculate_stats(sequence: str) -> dict:
+    """Funkcja zwraca słownik statystyk sekwencji, procent występowania nukleotydów oraz GC."""
+    dict_count={'A':0,'C':0,'G':0,'T':0,'ALL':0}
+    for i in sequence:
+        match i:
+            case 'A':
+                dict_count["A"]+=1
+                dict_count["ALL"]+=1
+            case 'C':
+                dict_count["C"]+=1
+                dict_count["ALL"]+=1
+            case 'G':
+                dict_count["G"]+=1
+                dict_count["ALL"]+=1
+            case 'T':
+                dict_count["T"]+=1
+                dict_count["ALL"]+=1
+    
+    dict_ans={
+        'A': round(dict_count['A']/dict_count["ALL"]*100,2),
+        'C':round(dict_count['C']/dict_count["ALL"]*100,2),
+        'G':round(dict_count['G']/dict_count["ALL"]*100,2),
+        'T':round(dict_count['T']/dict_count["ALL"]*100,2),
+        "GC":round((dict_count['G']+dict_count['C'])/dict_count["ALL"]*100,2)
+        }
+    return dict_ans
 
-#def calculate_stats(sequence: str) -> dict:
-#    """"""
+def insert_name(sequence: str, name: str) -> str:
+    """Funkcja wstawia imię w losową pozycję sekwencji, zapisane małymi literami."""
+    name=name.lower()
+    pos=random.randint(0, len(sequence))
+    seq_left=sequence[:pos]
+    seq_right=sequence[pos:]
+    return seq_left+name+seq_right
 
-#def insert_name(sequence: str, name: str) -> str:
-#    """"""
+def main():
+    """Główne wywoływanie funkcjonalności programu."""
+    length=validate_positive_int()
+    seq_id=validate_fasta_ID()
+    description=input("Podaj opis sekwencji (opcjonalnie, Enter aby pominąć): ").strip()
+    name=input("Podaj imię: ").strip()
+    sequence=generate_sequence(length)
+    stats=calculate_stats(sequence)
+    sequence_with_name=insert_name(sequence, name)
+    fasta_content=format_fasta(seq_id, sequence_with_name, description)
+    fasta_filename=seq_id+".fasta"
+    with open(fasta_filename, "w", encoding="utf-8") as f:
+        f.write(fasta_content)
+    
+    print("")
+    print("Sekwencja z imieniem: "+sequence_with_name)
+    print("")
+    print("Sekwencja zapisana do pliku: "+fasta_filename)
+    print("Statystyki sekwencji (length="+str(length)+"):")
+    print("A:          "+str(stats["A"])+"%")
+    print("C:          "+str(stats["C"])+"%")
+    print("G:          "+str(stats["G"])+"%")
+    print("T:          "+str(stats["T"])+"%")
+    print("GC-content: "+str(stats["GC"])+"%")
+
+if __name__ == "__main__":
+    main()
